@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bilelphone05 - متجر الإلكترونيات</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00d4ff;
+      --secondary: #ff6b35;
+      --dark: #050a14;
+      --dark2: #0a1628;
+      --dark3: #0f2040;
+      --text: #e0f0ff;
+      --muted: #5a7a9a;
+      --glow: 0 0 20px rgba(0,212,255,0.5);
+      --glow2: 0 0 20px rgba(255,107,53,0.5);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 20% 20%, rgba(0,212,255,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(255,107,53,0.06) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Grid lines */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(5,10,20,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,212,255,0.15);
+    }
+
+    .logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--primary);
+      text-shadow: var(--glow);
+      letter-spacing: 1px;
+    }
+
+    .logo span {
+      color: var(--secondary);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 32px;
+    }
+
+    nav ul a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    nav ul a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 2px;
+      background: var(--primary);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+      box-shadow: var(--glow);
+    }
+
+    nav ul a:hover { color: var(--primary); }
+    nav ul a:hover::after { transform: scaleX(1); }
+
+    .nav-btn {
+      background: linear-gradient(135deg, var(--primary), #0099bb);
+      color: var(--dark);
+      border: none;
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: var(--glow);
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0,212,255,0.7);
+    }
+
+    .nav-admin {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-left: 8px;
+    }
+    .nav-admin:hover { color: var(--secondary); border-color: var(--secondary); }
+
+    /* ===== ADMIN PANEL ===== */
+    .admin-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(10px);
+      z-index: 999;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .admin-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+
+    .admin-panel {
+      background: var(--dark2);
+      border: 1px solid rgba(0,212,255,0.2);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 800px;
+      margin: 40px auto;
+      overflow: hidden;
+    }
+
+    .admin-header {
+      background: linear-gradient(135deg, var(--dark3), var(--dark2));
+      border-bottom: 1px solid rgba(0,212,255,0.15);
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-header h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+
+    .admin-close {
+      background: rgba(255,100,100,0.1);
+      border: 1px solid rgba(255,100,100,0.3);
+      color: #ff6464;
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+    }
+    .admin-close:hover { background: rgba(255,100,100,0.25); }
+
+    /* Login */
+    .admin-login {
+      padding: 48px 32px;
+      text-align: center;
+    }
+    .admin-login h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--text); }
+    .admin-login p { color: var(--muted); font-size: 0.88rem; margin-bottom: 28px; }
+
+    .admin-input {
+      width: 100%;
+      background: var(--dark3);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 8px;
+      padding: 13px 16px;
+      color: var(--text);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1rem;
+      outline: none;
+      margin-bottom: 14px;
+      text-align: center;
+      letter-spacing: 4px;
+    }
+    .admin-input:focus { border-color: var(--primary); }
+
+    .admin-login-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), #0099bb);
+      color: var(--dark);
+      border: none;
+      padding: 13px;
+      border-radius: 8px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .admin-login-btn:hover { box-shadow: var(--glow); }
+
+    .login-error {
+      color: #ff6464;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* Dashboard */
+    .admin-dashboard { display: none; padding: 28px 32px; }
+
+    .admin-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid rgba(0,212,255,0.1);
+      padding-bottom: 16px;
+    }
+
+    .admin-tab {
+      background: transparent;
+      border: 1px solid rgba(0,212,255,0.15);
+      color: var(--muted);
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .admin-tab.active, .admin-tab:hover {
+      background: rgba(0,212,255,0.1);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Add product form */
+    .add-product-form {
+      background: var(--dark3);
+      border: 1px solid rgba(0,212,255,0.1);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+
+    .add-product-form h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--primary);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-row-full { margin-bottom: 14px; }
+
+    .admin-label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .admin-field {
+      width: 100%;
+      background: var(--dark2);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .admin-field:focus { border-color: var(--primary); }
+
+    select.admin-field option { background: var(--dark2); }
+
+    .add-product-btn {
+      background: linear-gradient(135deg, var(--primary), #0099bb);
+      color: var(--dark);
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 8px;
+    }
+    .add-product-btn:hover { box-shadow: var(--glow); transform: translateY(-2px); }
+
+    /* Products list in admin */
+    .admin-products-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .admin-product-item {
+      background: var(--dark3);
+      border: 1px solid rgba(0,212,255,0.08);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .admin-product-info { flex: 1; }
+    .admin-product-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+    .admin-product-meta { color: var(--muted); font-size: 0.82rem; }
+    .admin-product-price { color: var(--primary); font-family: 'Orbitron', monospace; font-size: 0.9rem; font-weight: 700; }
+
+    .admin-product-actions { display: flex; gap: 8px; }
+
+    .edit-btn, .delete-btn {
+      border: none;
+      width: 34px; height: 34px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+    .edit-btn { background: rgba(0,212,255,0.1); color: var(--primary); border: 1px solid rgba(0,212,255,0.2); }
+    .delete-btn { background: rgba(255,100,100,0.1); color: #ff6464; border: 1px solid rgba(255,100,100,0.2); }
+    .edit-btn:hover { background: rgba(0,212,255,0.25); }
+    .delete-btn:hover { background: rgba(255,100,100,0.25); }
+
+    .empty-msg { text-align: center; color: var(--muted); padding: 40px; font-size: 0.9rem; }
+
+    /* Info tab */
+    .info-form { display: flex; flex-direction: column; gap: 16px; }
+    .save-info-btn {
+      background: linear-gradient(135deg, var(--secondary), #cc5020);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      align-self: flex-start;
+    }
+    .save-info-btn:hover { box-shadow: var(--glow2); transform: translateY(-2px); }
+
+    .success-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #00aa55;
+      color: white;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      z-index: 9999;
+      transition: transform 0.4s ease;
+      pointer-events: none;
+    }
+    .success-toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 40px 60px;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      animation: fadeUp 1s ease both;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(0,212,255,0.1);
+      border: 1px solid rgba(0,212,255,0.3);
+      color: var(--primary);
+      padding: 6px 20px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 .highlight {
+      color: var(--primary);
+      text-shadow: var(--glow);
+    }
+
+    .hero h1 .highlight2 {
+      color: var(--secondary);
+      text-shadow: var(--glow2);
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #0099bb);
+      color: var(--dark);
+      border: none;
+      padding: 15px 36px;
+      border-radius: 8px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: var(--glow);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 40px rgba(0,212,255,0.8);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(0,212,255,0.4);
+      padding: 15px 36px;
+      border-radius: 8px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(0,212,255,0.05);
+    }
+
+    /* Floating devices animation */
+    .hero-visual {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .float-icon {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0.06;
+      animation: floatRandom 8s ease-in-out infinite;
+    }
+
+    .float-icon:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
+    .float-icon:nth-child(2) { top: 25%; right: 12%; animation-delay: 1s; }
+    .float-icon:nth-child(3) { bottom: 30%; left: 8%; animation-delay: 2s; }
+    .float-icon:nth-child(4) { bottom: 20%; right: 10%; animation-delay: 3s; }
+    .float-icon:nth-child(5) { top: 60%; left: 5%; animation-delay: 1.5s; }
+    .float-icon:nth-child(6) { top: 40%; right: 5%; animation-delay: 2.5s; }
+
+    @keyframes floatRandom {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      33% { transform: translateY(-20px) rotate(5deg); }
+      66% { transform: translateY(10px) rotate(-5deg); }
+    }
+
+    /* STATS */
+    .stats {
+      position: relative;
+      z-index: 1;
+      padding: 60px 40px;
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(0,212,255,0.1);
+      border-bottom: 1px solid rgba(0,212,255,0.1);
+      background: rgba(0,212,255,0.02);
+    }
+
+    .stat {
+      text-align: center;
+      animation: fadeUp 1s ease both;
+    }
+
+    .stat-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--primary);
+      text-shadow: var(--glow);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    /* PRODUCTS */
+    .section {
+      position: relative;
+      z-index: 1;
+      padding: 80px 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-tag {
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .section-title span {
+      color: var(--primary);
+      text-shadow: var(--glow);
+    }
+
+    /* Product grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    .product-card {
+      background: var(--dark2);
+      border: 1px solid rgba(0,212,255,0.1);
+      border-radius: 16px;
+      padding: 28px;
+      transition: all 0.4s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .product-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .product-card:hover {
+      border-color: rgba(0,212,255,0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 30px rgba(0,212,255,0.1);
+    }
+
+    .product-card:hover::before { opacity: 1; }
+
+    .product-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: var(--secondary);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 50px;
+      text-transform: uppercase;
+    }
+
+    .product-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .product-desc {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .product-price {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .add-btn {
+      background: rgba(0,212,255,0.1);
+      border: 1px solid rgba(0,212,255,0.3);
+      color: var(--primary);
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.3rem;
+      transition: all 0.3s;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .add-btn:hover {
+      background: var(--primary);
+      color: var(--dark);
+      box-shadow: var(--glow);
+    }
+
+    /* CATEGORIES */
+    .categories {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .cat-btn {
+      background: rgba(0,212,255,0.05);
+      border: 1px solid rgba(0,212,255,0.2);
+      color: var(--muted);
+      padding: 8px 22px;
+      border-radius: 50px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .cat-btn.active, .cat-btn:hover {
+      background: rgba(0,212,255,0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* SERVICES */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .service-card {
+      background: var(--dark2);
+      border: 1px solid rgba(0,212,255,0.08);
+      border-radius: 14px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: all 0.3s;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .service-card:hover {
+      border-color: rgba(0,212,255,0.3);
+      background: var(--dark3);
+    }
+
+    .service-icon {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .service-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .service-desc {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    /* CONTACT */
+    .contact-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .contact-info h3 {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: var(--dark2);
+      border: 1px solid rgba(0,212,255,0.08);
+      border-radius: 10px;
+      transition: border-color 0.3s;
+    }
+
+    .contact-item:hover { border-color: rgba(0,212,255,0.3); }
+
+    .contact-icon {
+      font-size: 1.5rem;
+      width: 40px;
+      text-align: center;
+    }
+
+    .contact-text strong {
+      display: block;
+      color: var(--text);
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .contact-text span {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .contact-form {
+      background: var(--dark2);
+      border: 1px solid rgba(0,212,255,0.1);
+      border-radius: 16px;
+      padding: 36px;
+    }
+
+    .contact-form h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: var(--text);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: var(--dark3);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.95rem;
+      transition: border-color 0.3s;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+    }
+
+    .form-group textarea { resize: vertical; min-height: 100px; }
+
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), #0099bb);
+      color: var(--dark);
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: var(--glow);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0,212,255,0.7);
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(0,212,255,0.1);
+      padding: 48px 40px 24px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--primary);
+      text-shadow: var(--glow);
+      margin-bottom: 12px;
+    }
+
+    .footer-logo span { color: var(--secondary); }
+
+    footer p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+
+    .social-link {
+      width: 44px; height: 44px;
+      background: var(--dark2);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .social-link:hover {
+      border-color: var(--primary);
+      background: rgba(0,212,255,0.1);
+      transform: translateY(-3px);
+    }
+
+    .footer-copy {
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 20px;
+    }
+
+    /* ===== PRODUCT POPUP ===== */
+    .product-popup-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(12px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .product-popup-overlay.open { display: flex; }
+
+    .product-popup {
+      background: var(--dark2);
+      border: 1px solid rgba(0,212,255,0.25);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 480px;
+      overflow: hidden;
+      animation: popupIn 0.3s ease both;
+      position: relative;
+    }
+
+    @keyframes popupIn {
+      from { opacity: 0; transform: scale(0.88) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .popup-img-wrap {
+      width: 100%;
+      background: var(--dark3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 260px;
+      position: relative;
+    }
+
+    .popup-img-wrap img {
+      width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .popup-icon-big {
+      font-size: 6rem;
+      padding: 40px;
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,100,100,0.4);
+      color: #ff6464;
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      z-index: 10;
+      transition: all 0.3s;
+    }
+    .popup-close:hover { background: rgba(255,100,100,0.3); }
+
+    .popup-body {
+      padding: 24px 28px 28px;
+    }
+
+    .popup-badge {
+      display: inline-block;
+      background: var(--secondary);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 12px;
+      border-radius: 50px;
+      margin-bottom: 10px;
+    }
+
+    .popup-name {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .popup-cat {
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    .popup-desc {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .popup-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .popup-price {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--primary);
+      text-shadow: var(--glow);
+    }
+
+    .popup-add-btn {
+      background: linear-gradient(135deg, var(--primary), #0099bb);
+      color: var(--dark);
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: var(--glow);
+    }
+    .popup-add-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,212,255,0.7); }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      nav ul { display: none; }
+      .hero { padding: 100px 20px 60px; }
+      .section { padding: 60px 20px; }
+      .stats { gap: 30px; padding: 40px 20px; }
+      .contact-wrapper { grid-template-columns: 1fr; }
+      footer { padding: 40px 20px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">Bilel<span>phone</span>05</div>
+    <ul>
+      <li><a href="#products">المنتجات</a></li>
+      <li><a href="#services">الخدمات</a></li>
+      <li><a href="#contact">تواصل معنا</a></li>
+    </ul>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="nav-admin" onclick="openAdmin()">⚙️ لوحة التحكم</button>
+      <button class="nav-btn">🛒 السلة</button>
+    </div>
+  </nav>
+
+  <!-- ADMIN OVERLAY -->
+  <div class="admin-overlay" id="adminOverlay">
+    <div class="admin-panel">
+      <div class="admin-header">
+        <h2>⚙️ لوحة تحكم Bilelphone05</h2>
+        <button class="admin-close" onclick="closeAdmin()">✕</button>
+      </div>
+      <div class="admin-login" id="adminLogin">
+        <h3>🔐 تسجيل الدخول</h3>
+        <p>أدخل كلمة المرور للوصول إلى لوحة التحكم</p>
+        <input type="password" class="admin-input" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter') adminLogin()">
+        <button class="admin-login-btn" onclick="adminLogin()">دخول</button>
+        <div class="login-error" id="loginError">❌ كلمة المرور غير صحيحة</div>
+        <p style="color:var(--muted);font-size:0.78rem;margin-top:16px;">كلمة المرور الافتراضية: <strong style="color:var(--primary)">admin123</strong></p>
+      </div>
+      <div class="admin-dashboard" id="adminDashboard">
+        <div class="admin-tabs">
+          <button class="admin-tab active" onclick="switchTab('products')">🛍️ المنتجات</button>
+          <button class="admin-tab" onclick="switchTab('info')">📋 معلومات المحل</button>
+        </div>
+        <div class="tab-content active" id="tab-products">
+          <div class="add-product-form">
+            <h4>➕ إضافة منتج جديد</h4>
+            <div class="form-row">
+              <div>
+                <label class="admin-label">اسم المنتج</label>
+                <input class="admin-field" id="pName" placeholder="مثال: iPhone 15">
+              </div>
+              <div>
+                <label class="admin-label">السعر (دج)</label>
+                <input class="admin-field" id="pPrice" placeholder="مثال: 85000" type="number">
+              </div>
+            </div>
+            <div class="form-row">
+              <div>
+                <label class="admin-label">الفئة</label>
+                <select class="admin-field" id="pCat">
+                  <option>هواتف</option>
+                  <option>لابتوب</option>
+                  <option>إكسسوارات</option>
+                  <option>أجهزة لوحية</option>
+                  <option>سماعات</option>
+                </select>
+              </div>
+              <div>
+                <label class="admin-label">الأيقونة (رمز)</label>
+                <input class="admin-field" id="pIcon" placeholder="مثال: 📱">
+              </div>
+            </div>
+            <div class="form-row-full">
+              <label class="admin-label">الوصف</label>
+              <input class="admin-field" id="pDesc" placeholder="وصف مختصر للمنتج">
+            </div>
+            <div class="form-row-full">
+              <label class="admin-label">رابط الصورة (اختياري)</label>
+              <input class="admin-field" id="pImg" placeholder="https://...">
+            </div>
+            <button class="add-product-btn" onclick="addProduct()">✅ إضافة المنتج</button>
+          </div>
+          <h4 style="margin-bottom:16px;color:var(--text);">📦 المنتجات الحالية</h4>
+          <div class="admin-products-list" id="adminProductsList"></div>
+        </div>
+        <div class="tab-content" id="tab-info">
+          <div class="info-form">
+            <div>
+              <label class="admin-label">📱 رقم الهاتف / واتساب</label>
+              <input class="admin-field" id="infoPhone" placeholder="+213 XX XXX XXXX">
+            </div>
+            <div>
+              <label class="admin-label">📍 موقع المحل</label>
+              <input class="admin-field" id="infoLocation" placeholder="المدينة / الحي">
+            </div>
+            <div>
+              <label class="admin-label">🕐 أوقات العمل</label>
+              <input class="admin-field" id="infoHours" placeholder="السبت - الخميس: 9 صباحاً - 8 مساءً">
+            </div>
+            <div>
+              <label class="admin-label">📘 صفحة فيسبوك</label>
+              <input class="admin-field" id="infoFb" placeholder="رابط أو اسم الصفحة">
+            </div>
+            <button class="save-info-btn" onclick="saveInfo()">💾 حفظ المعلومات</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="success-toast" id="toast"></div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-visual">
+      <div class="float-icon">📱</div>
+      <div class="float-icon">💻</div>
+      <div class="float-icon">🎧</div>
+      <div class="float-icon">⌚</div>
+      <div class="float-icon">📷</div>
+      <div class="float-icon">🖥️</div>
+    </div>
+    <div class="hero-content">
+      <span class="hero-badge">⚡ أحدث التقنيات</span>
+      <h1>
+        مرحباً بك في<br>
+        <span class="highlight">Bilel</span><span class="highlight2">phone</span><span class="highlight">05</span>
+      </h1>
+      <p>وجهتك الأولى للإلكترونيات الحديثة — هواتف، أجهزة لوحية، إكسسوارات، وخدمات إصلاح احترافية بأفضل الأسعار</p>
+      <div class="hero-btns">
+        <a href="#products" class="btn-primary">🛍️ تسوق الآن</a>
+        <a href="#contact" class="btn-secondary">📞 تواصل معنا</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">+500</div>
+      <div class="stat-label">منتج متاح</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">+1000</div>
+      <div class="stat-label">عميل راضٍ</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5★</div>
+      <div class="stat-label">تقييم العملاء</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">دعم فني</div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <section class="section" id="products">
+    <div class="section-header">
+      <span class="section-tag">🔥 أحدث المنتجات</span>
+      <h2 class="section-title">تشكيلة <span>الإلكترونيات</span></h2>
+    </div>
+
+    <div class="categories">
+      <button class="cat-btn active">الكل</button>
+      <button class="cat-btn">هواتف</button>
+      <button class="cat-btn">لابتوب</button>
+      <button class="cat-btn">إكسسوارات</button>
+      <button class="cat-btn">أجهزة لوحية</button>
+      <button class="cat-btn">سماعات</button>
+    </div>
+
+    <div class="products-grid">
+      <div class="product-card" style="animation-delay:0.1s">
+        <span class="product-badge">جديد</span>
+        <span class="product-icon">📱</span>
+        <div class="product-name">iPhone 15 Pro Max</div>
+        <div class="product-desc">أحدث هاتف من آبل بمعالج A17 Pro وكاميرا 48MP احترافية</div>
+        <div class="product-footer">
+          <span class="product-price">189,000 دج</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+
+      <div class="product-card" style="animation-delay:0.2s">
+        <span class="product-badge" style="background:#00d4ff; color:#000">عرض</span>
+        <span class="product-icon">📱</span>
+        <div class="product-name">Samsung Galaxy S24</div>
+        <div class="product-desc">هاتف سامسونج الرائد بذكاء اصطناعي متقدم وشاشة Dynamic AMOLED</div>
+        <div class="product-footer">
+          <span class="product-price">145,000 دج</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+
+      <div class="product-card" style="animation-delay:0.3s">
+        <span class="product-icon">💻</span>
+        <div class="product-name">MacBook Pro M3</div>
+        <div class="product-desc">الأداء الاستثنائي بمعالج Apple M3 لإنجاز أصعب المهام</div>
+        <div class="product-footer">
+          <span class="product-price">310,000 دج</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+
+      <div class="product-card" style="animation-delay:0.4s">
+        <span class="product-badge">الأفضل</span>
+        <span class="product-icon">🎧</span>
+        <div class="product-name">AirPods Pro 2</div>
+        <div class="product-desc">سماعات لاسلكية بإلغاء ضجيج فائق وجودة صوت استثنائية</div>
+        <div class="product-footer">
+          <span class="product-price">28,000 دج</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+
+      <div class="product-card" style="animation-delay:0.5s">
+        <span class="product-icon">⌚</span>
+        <div class="product-name">Apple Watch Series 9</div>
+        <div class="product-desc">ساعة ذكية متطورة لمتابعة صحتك ونشاطك اليومي</div>
+        <div class="product-footer">
+          <span class="product-price">52,000 دج</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+
+      <div class="product-card" style="animation-delay:0.6s">
+        <span class="product-icon">📲</span>
+        <div class="product-name">iPad Air M2</div>
+        <div class="product-desc">جهاز لوحي خفيف وقوي مثالي للعمل والترفيه والإبداع</div>
+        <div class="product-footer">
+          <span class="product-price">98,000 دج</span>
+          <button class="add-btn">+</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section" id="services" style="background: linear-gradient(180deg, transparent, rgba(0,212,255,0.02), transparent); border-radius: 20px;">
+    <div class="section-header">
+      <span class="section-tag">🛠️ خدماتنا</span>
+      <h2 class="section-title">نقدم <span>أفضل الخدمات</span></h2>
+    </div>
+    <div class="services-grid">
+      <div class="service-card" style="animation-delay:0.1s">
+        <span class="service-icon">🔧</span>
+        <div class="service-title">إصلاح الهواتف</div>
+        <div class="service-desc">تصليح شاشات، بطاريات، وكاميرات لجميع الأنواع بضمان</div>
+      </div>
+      <div class="service-card" style="animation-delay:0.2s">
+        <span class="service-icon">💾</span>
+        <div class="service-title">استرجاع البيانات</div>
+        <div class="service-desc">استعادة الملفات والصور المحذوفة أو المفقودة بأمان تام</div>
+      </div>
+      <div class="service-card" style="animation-delay:0.3s">
+        <span class="service-icon">🛡️</span>
+        <div class="service-title">تركيب الحماية</div>
+        <div class="service-desc">زجاج حماية وأغطية لجميع موديلات الهواتف والأجهزة</div>
+      </div>
+      <div class="service-card" style="animation-delay:0.4s">
+        <span class="service-icon">🚚</span>
+        <div class="service-title">توصيل للمنزل</div>
+        <div class="service-desc">توصيل سريع لجميع الولايات خلال 24 إلى 48 ساعة فقط</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section" id="contact">
+    <div class="section-header">
+      <span class="section-tag">📬 تواصل معنا</span>
+      <h2 class="section-title">نحن هنا <span>لمساعدتك</span></h2>
+    </div>
+    <div class="contact-wrapper">
+      <div class="contact-info">
+        <h3>معلومات التواصل</h3>
+        <div class="contact-item">
+          <span class="contact-icon">📱</span>
+          <div class="contact-text">
+            <strong>الهاتف / واتساب</strong>
+            <span>0562505116</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">📍</span>
+          <div class="contact-text">
+            <strong>الموقع</strong>
+            <span>باتنة - وسط المدينة شارع DMB</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">🕐</span>
+          <div class="contact-text">
+            <strong>أوقات العمل</strong>
+            <span>السبت - الخميس: 9 صباحاً - 8 مساءً</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">📸</span>
+          <div class="contact-text">
+            <strong>إنستاغرام</strong>
+            <a href="https://www.instagram.com/bilelphone05?igsh=b3N1aHF5MnJqa3o1" style="color:var(--primary);text-decoration:none;">bilelphone05@</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form">
+        <h3>أرسل لنا رسالة</h3>
+        <div class="form-group">
+          <label>الاسم الكامل</label>
+          <input type="text" placeholder="أدخل اسمك">
+        </div>
+        <div class="form-group">
+          <label>رقم الهاتف</label>
+          <input type="tel" placeholder="0XXX XXX XXX">
+        </div>
+        <div class="form-group">
+          <label>الرسالة</label>
+          <textarea placeholder="اكتب رسالتك أو استفسارك هنا..."></textarea>
+        </div>
+        <button class="submit-btn" onclick="alert('✅ تم إرسال رسالتك! سنتواصل معك قريباً')">إرسال الرسالة ✉️</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Bilel<span>phone</span>05</div>
+    <p>متجرك الموثوق للإلكترونيات — جودة عالية، أسعار منافسة</p>
+    <div class="social-links">
+      <div class="social-link">📘</div>
+      <div class="social-link">📸</div>
+      <div class="social-link">💬</div>
+      <div class="social-link">🎵</div>
+    </div>
+    <div class="footer-copy">© 2025 Bilelphone05. جميع الحقوق محفوظة.</div>
+  </footer>
+
+  <!-- PRODUCT POPUP -->
+  <div class="product-popup-overlay" id="productPopup">
+    <div class="product-popup">
+      <div class="popup-img-wrap" id="popupImgWrap"></div>
+      <button class="popup-close" onclick="closeProductPopup()">✕</button>
+      <div class="popup-body">
+        <div id="popupBadge"></div>
+        <div class="popup-name" id="popupName"></div>
+        <div class="popup-cat" id="popupCat"></div>
+        <div class="popup-desc" id="popupDesc"></div>
+        <div class="popup-footer">
+          <span class="popup-price" id="popupPrice"></span>
+          <button class="popup-add-btn" id="popupAddBtn">🛒 أضف للسلة</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== PRODUCT POPUP =====
+    function openProductPopup(index) {
+      const p = products[index];
+      if (!p) return;
+
+      // صورة أو أيقونة
+      const imgWrap = document.getElementById('popupImgWrap');
+      if (p.img) {
+        imgWrap.innerHTML = `<img src="${p.img}" alt="${p.name}">`;
+      } else {
+        imgWrap.innerHTML = `<span class="popup-icon-big">${p.icon || '📦'}</span>`;
+      }
+
+      // بيانات المنتج
+      const badge = document.getElementById('popupBadge');
+      badge.innerHTML = p.badge ? `<span class="popup-badge">${p.badge}</span>` : '';
+      document.getElementById('popupName').textContent = p.name;
+      document.getElementById('popupCat').textContent = p.cat;
+      document.getElementById('popupDesc').textContent = p.desc || '';
+      document.getElementById('popupPrice').textContent = Number(p.price).toLocaleString() + ' دج';
+
+      document.getElementById('productPopup').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeProductPopup() {
+      document.getElementById('productPopup').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // إغلاق عند الضغط خارج الـ popup
+    document.getElementById('productPopup').addEventListener('click', function(e) {
+      if (e.target === this) closeProductPopup();
+    });
+
+    // ===== CATEGORY FILTER =====
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // ===== ADD TO CART =====
+    function bindAddBtns() {
+      document.querySelectorAll('.add-btn').forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          btn.textContent = '✓';
+          btn.style.background = 'var(--primary)';
+          btn.style.color = 'var(--dark)';
+          setTimeout(() => {
+            btn.textContent = '+';
+            btn.style.background = '';
+            btn.style.color = '';
+          }, 1500);
+        };
+      });
+    }
+    bindAddBtns();
+
+    // ===== SMOOTH SCROLL =====
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // ===== PRODUCTS DATA =====
+    let products = JSON.parse(localStorage.getItem('bp05_products') || '[]');
+    if (products.length === 0) {
+      products = [
+        { id: 1, name: 'iPhone 15 Pro Max', price: 189000, cat: 'هواتف', icon: '📱', desc: 'أحدث هاتف من آبل بمعالج A17 Pro وكاميرا 48MP احترافية', badge: 'جديد' },
+        { id: 2, name: 'Samsung Galaxy S24', price: 145000, cat: 'هواتف', icon: '📱', desc: 'هاتف سامسونج الرائد بذكاء اصطناعي متقدم', badge: 'عرض' },
+        { id: 3, name: 'MacBook Pro M3', price: 310000, cat: 'لابتوب', icon: '💻', desc: 'الأداء الاستثنائي بمعالج Apple M3', badge: '' },
+        { id: 4, name: 'AirPods Pro 2', price: 28000, cat: 'سماعات', icon: '🎧', desc: 'سماعات لاسلكية بإلغاء ضجيج فائق', badge: 'الأفضل' },
+        { id: 5, name: 'Apple Watch Series 9', price: 52000, cat: 'إكسسوارات', icon: '⌚', desc: 'ساعة ذكية متطورة لمتابعة صحتك', badge: '' },
+        { id: 6, name: 'iPad Air M2', price: 98000, cat: 'أجهزة لوحية', icon: '📲', desc: 'جهاز لوحي خفيف وقوي', badge: '' },
+      ];
+      saveProducts();
+    }
+
+    let storeInfo = JSON.parse(localStorage.getItem('bp05_info') || '{}');
+
+    function saveProducts() {
+      localStorage.setItem('bp05_products', JSON.stringify(products));
+    }
+
+    function renderProducts() {
+      const grid = document.querySelector('.products-grid');
+      if (!grid) return;
+      grid.innerHTML = products.map((p, i) => `
+        <div class="product-card" style="animation-delay:${i*0.1}s" onclick="openProductPopup(${i})">
+          ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+          ${p.img ? `<img src="${p.img}" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:12px;">` : `<span class="product-icon">${p.icon || '📦'}</span>`}
+          <div class="product-name">${p.name}</div>
+          <div class="product-desc">${p.desc}</div>
+          <div class="product-footer">
+            <span class="product-price">${Number(p.price).toLocaleString()} دج</span>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+      `).join('');
+      bindAddBtns();
+    }
+    renderProducts();
+
+    function renderAdminProducts() {
+      const list = document.getElementById('adminProductsList');
+      if (!list) return;
+      if (products.length === 0) {
+        list.innerHTML = '<div class="empty-msg">لا توجد منتجات بعد. أضف منتجك الأول! 👆</div>';
+        return;
+      }
+      list.innerHTML = products.map((p, i) => `
+        <div class="admin-product-item">
+          <span style="font-size:1.5rem">${p.icon || '📦'}</span>
+          <div class="admin-product-info">
+            <div class="admin-product-name">${p.name}</div>
+            <div class="admin-product-meta">${p.cat}</div>
+          </div>
+          <div class="admin-product-price">${Number(p.price).toLocaleString()} دج</div>
+          <div class="admin-product-actions">
+            <button class="delete-btn" onclick="deleteProduct(${i})">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addProduct() {
+      const name = document.getElementById('pName').value.trim();
+      const price = document.getElementById('pPrice').value;
+      const cat = document.getElementById('pCat').value;
+      const icon = document.getElementById('pIcon').value.trim() || '📦';
+      const desc = document.getElementById('pDesc').value.trim();
+      const img = document.getElementById('pImg').value.trim();
+
+      if (!name || !price) { showToast('❌ أدخل اسم المنتج والسعر'); return; }
+
+      products.push({ id: Date.now(), name, price: Number(price), cat, icon, desc, img });
+      saveProducts();
+      renderProducts();
+      renderAdminProducts();
+
+      document.getElementById('pName').value = '';
+      document.getElementById('pPrice').value = '';
+      document.getElementById('pIcon').value = '';
+      document.getElementById('pDesc').value = '';
+      document.getElementById('pImg').value = '';
+
+      showToast('✅ تم إضافة المنتج بنجاح!');
+    }
+
+    function deleteProduct(i) {
+      if (!confirm('هل تريد حذف هذا المنتج؟')) return;
+      products.splice(i, 1);
+      saveProducts();
+      renderProducts();
+      renderAdminProducts();
+      showToast('🗑️ تم حذف المنتج');
+    }
+
+    function saveInfo() {
+      storeInfo.phone = document.getElementById('infoPhone').value;
+      storeInfo.location = document.getElementById('infoLocation').value;
+      storeInfo.hours = document.getElementById('infoHours').value;
+      storeInfo.fb = document.getElementById('infoFb').value;
+      localStorage.setItem('bp05_info', JSON.stringify(storeInfo));
+
+      // Update contact section
+      const items = document.querySelectorAll('.contact-item');
+      if (storeInfo.phone) items[0]?.querySelector('span:last-child')?.setAttribute('data-val', storeInfo.phone);
+      if (storeInfo.location) { const el = items[1]?.querySelector('.contact-text span'); if(el) el.textContent = storeInfo.location; }
+      if (storeInfo.hours) { const el = items[2]?.querySelector('.contact-text span'); if(el) el.textContent = storeInfo.hours; }
+      if (storeInfo.phone) { const el = items[0]?.querySelector('.contact-text span'); if(el) el.textContent = storeInfo.phone; }
+
+      showToast('✅ تم حفظ معلومات المحل!');
+    }
+
+    function loadInfo() {
+      if (storeInfo.phone) document.getElementById('infoPhone').value = storeInfo.phone;
+      if (storeInfo.location) document.getElementById('infoLocation').value = storeInfo.location;
+      if (storeInfo.hours) document.getElementById('infoHours').value = storeInfo.hours;
+      if (storeInfo.fb) document.getElementById('infoFb').value = storeInfo.fb;
+    }
+
+    // ===== ADMIN PANEL =====
+    function openAdmin() {
+      document.getElementById('adminOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAdmin() {
+      document.getElementById('adminOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+      document.getElementById('adminPass').value = '';
+      document.getElementById('loginError').style.display = 'none';
+    }
+
+    function adminLogin() {
+      const pass = document.getElementById('adminPass').value;
+      if (pass === 'admin123') {
+        document.getElementById('adminLogin').style.display = 'none';
+        document.getElementById('adminDashboard').style.display = 'block';
+        renderAdminProducts();
+        loadInfo();
+      } else {
+        document.getElementById('loginError').style.display = 'block';
+      }
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // ===== TOAST =====
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // Close overlay on outside click
+    document.getElementById('adminOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeAdmin();
+    });
+  </script>
+</body>
+</html>
